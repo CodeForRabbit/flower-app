@@ -2,15 +2,15 @@ let data = [];
 let memberIndex = new Map();
 let flowerIndex = new Map();
 
-const memberSearch = document.getElementById("memberSearch");
-const flowerSearch = document.getElementById("flowerSearch");
+const memberSelect = document.getElementById("memberSelect");
+const flowerSelect = document.getElementById("flowerSelect");
 
 fetch('data.json')
   .then(r => r.json())
   .then(d => {
     data = d;
     buildIndex();
-    hydrateDatalists();
+    hydrateSelects();
     renderDefault();
 });
 
@@ -48,36 +48,37 @@ function buildIndex() {
   });
 }
 
-function hydrateDatalists() {
-  const memberList = document.getElementById("memberList");
-  const flowerList = document.getElementById("flowerList");
-  memberList.innerHTML = "";
-  flowerList.innerHTML = "";
+function hydrateSelects() {
+  memberSelect.innerHTML = `<option value="">请选择公会成员</option>`;
+  flowerSelect.innerHTML = `<option value="">请选择花名</option>`;
 
   [...memberIndex.keys()].sort().forEach(name => {
     const opt = document.createElement("option");
     opt.value = name;
-    memberList.appendChild(opt);
+    opt.textContent = name;
+    memberSelect.appendChild(opt);
   });
 
   [...flowerIndex.keys()].sort().forEach(name => {
     const opt = document.createElement("option");
     opt.value = name;
-    flowerList.appendChild(opt);
+    opt.textContent = name;
+    flowerSelect.appendChild(opt);
   });
 }
 
 function renderDefault() {
-  const list = data.map(item => {
-    const flowers = parseFlowers(item.flowers);
-    return { name: item.name, flowers };
-  });
-  renderMemberCards(list, "");
+  renderTip("请选择成员或花名进行筛选");
 }
 
 function renderMemberCards(list, highlightFlower) {
   const el = document.getElementById("result");
   el.innerHTML = "";
+
+  if (!list.length) {
+    renderTip("未找到匹配成员");
+    return;
+  }
 
   list.forEach(item => {
     const flowerHtml = item.flowers.map(f => {
@@ -119,6 +120,11 @@ function renderFlowerCards(flowers) {
   const el = document.getElementById("result");
   el.innerHTML = "";
 
+  if (!flowers.length) {
+    renderTip("未找到匹配花名");
+    return;
+  }
+
   flowers.forEach(name => {
     const owners = [...(flowerIndex.get(name) || [])];
     const ownersHtml = owners.length
@@ -134,9 +140,27 @@ function renderFlowerCards(flowers) {
   });
 }
 
+function renderTip(text) {
+  const el = document.getElementById("result");
+  el.innerHTML = `
+    <div class="card">
+      <div class="empty">${text}</div>
+    </div>
+  `;
+}
+
 function filter() {
-  const memberQuery = memberSearch.value.trim();
-  const flowerQuery = flowerSearch.value.trim();
+  let memberQuery = memberSelect.value.trim();
+  const flowerQuery = flowerSelect.value.trim();
+
+  if (flowerQuery && memberQuery) {
+    const member = memberIndex.get(memberQuery);
+    const hasFlower = member && member.flowers.some(f => f.name === flowerQuery);
+    if (!hasFlower) {
+      memberSelect.value = "";
+      memberQuery = "";
+    }
+  }
 
   if (!memberQuery && !flowerQuery) {
     renderDefault();
@@ -166,12 +190,12 @@ function filter() {
 }
 
 // 筛选
-document.querySelectorAll("input")
-  .forEach(el => el.addEventListener("input", filter));
+document.querySelectorAll("select")
+  .forEach(el => el.addEventListener("change", filter));
 
 document.getElementById("resetBtn")
   .addEventListener("click", () => {
-    memberSearch.value = "";
-    flowerSearch.value = "";
+    memberSelect.value = "";
+    flowerSelect.value = "";
     renderDefault();
   });
