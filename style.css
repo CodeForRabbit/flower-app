@@ -47,6 +47,14 @@ body::after {
   z-index: 1;
 }
 
+.edit-toggle {
+  position: sticky;
+  top: 8px;
+  margin: 0 12px 8px auto;
+  display: block;
+  z-index: 2;
+}
+
 @media (max-width: 600px) {
   body::before,
   body::after {
@@ -94,6 +102,16 @@ input, select, button {
   border: 1px solid #eee;
   background: #fff;
   font-size: 14px;
+}
+
+textarea {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  background: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
 }
 
 .actions {
@@ -194,4 +212,84 @@ button:hover {
 .empty {
   font-size: 12px;
   color: #b4a59d;
+}
+
+.editor {
+  margin: 16px 12px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(120, 80, 60, 0.08);
+  border: 1px solid #f1e4dc;
+}
+
+.hidden {
+  display: none;
+}
+
+.editor h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #6f3b2f;
+  letter-spacing: 1px;
+}
+
+.editor-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.editor-divider {
+  height: 1px;
+  background: #f1e4dc;
+  margin: 12px 0;
+}
+
+.editor-tip {
+  font-size: 12px;
+  color: #9b8b83;
+  margin: 6px 0 10px 0;
+}
+
+.flower-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flower-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.flower-controls input,
+.flower-controls select {
+  flex: 1;
+}
+
+.flower-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eef3ef;
+  color: #4a5b50;
+  font-size: 12px;
+}
+
+.tag button {
+  padding: 0 6px;
+  border-radius: 999px;
+  border: 1px solid #d8e2dc;
+  background: #f7fbf8;
+  font-size: 12px;
 }
