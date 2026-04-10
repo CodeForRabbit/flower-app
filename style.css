@@ -28,11 +28,34 @@ body {
   gap: 10px;
 }
 
-input, select {
+.filter-label {
+  font-size: 12px;
+  color: #8a7a72;
+  margin-top: 4px;
+}
+
+input, select, button {
   padding: 10px;
   border-radius: 12px;
   border: 1px solid #eee;
   background: #fff;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  cursor: pointer;
+  background: #f7e8e2;
+  color: #7a5a52;
+  border: 1px solid #f0d8cf;
+}
+
+button:hover {
+  background: #f3ded6;
 }
 
 .card {
@@ -61,4 +84,46 @@ input, select {
 .flower img {
   width: 16px;
   height: 16px;
+}
+
+.flower.highlight {
+  background: #ffd7c6;
+  color: #8b3d2c;
+}
+
+.flower-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.related-block {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.related-title {
+  font-size: 12px;
+  color: #8a7a72;
+  margin-bottom: 4px;
+}
+
+.related-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.owner {
+  background: #eef5f0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #4b6654;
+}
+
+.empty {
+  font-size: 12px;
+  color: #b4a59d;
 }

@@ -15,8 +15,16 @@
 </div>
 
 <div class="filters">
-  <input id="memberSearch" placeholder="查找花主" />
-  <input id="flowerSearch" placeholder="查找花名" />
+  <label class="filter-label" for="memberSearch">成员</label>
+  <input id="memberSearch" list="memberList" placeholder="选择成员或输入关键字" />
+  <datalist id="memberList"></datalist>
+
+  <label class="filter-label" for="flowerSearch">花名</label>
+  <input id="flowerSearch" list="flowerList" placeholder="选择花名或输入关键字" />
+  <datalist id="flowerList"></datalist>
+
+  <!-- 等级筛选后续再启用 -->
+  <!--
   <select id="levelFilter">
     <option value="">全部品级</option>
     <option>凡品</option>
@@ -25,6 +33,11 @@
     <option>华品</option>
     <option>仙品</option>
   </select>
+  -->
+
+  <div class="actions">
+    <button id="resetBtn" type="button">清空筛选</button>
+  </div>
 </div>
 
 <div id="result"></div>
