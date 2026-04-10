@@ -12,6 +12,7 @@ const addFlowerBtn = document.getElementById("addFlowerBtn");
 const flowerInput = document.getElementById("flowerInput");
 const flowerTagsEl = document.getElementById("flowerTags");
 const saveLocalBtn = document.getElementById("saveLocalBtn");
+const deleteMemberBtn = document.getElementById("deleteMemberBtn");
 const saveGithubBtn = document.getElementById("saveGithubBtn");
 const githubTokenInput = document.getElementById("githubToken");
 const saveStatus = document.getElementById("saveStatus");
@@ -189,17 +190,25 @@ function renderTip(text) {
   `;
 }
 
-function setFlowerTagsFromString(str) {
-  if (!str) {
-    flowerTags = [];
-    renderFlowerTags();
-    return;
-  }
+function normalizeFlowerList(str) {
+  if (!str) return [];
   const tokens = str
     .split(/[，、,\s]+/)
     .map(s => s.trim())
     .filter(Boolean);
-  flowerTags = Array.from(new Set(tokens));
+  const seen = new Set();
+  const result = [];
+  tokens.forEach(t => {
+    if (!seen.has(t)) {
+      seen.add(t);
+      result.push(t);
+    }
+  });
+  return result;
+}
+
+function setFlowerTagsFromString(str) {
+  flowerTags = normalizeFlowerList(str);
   renderFlowerTags();
 }
 
@@ -240,7 +249,8 @@ function addFlowerTag(name) {
 
 function updateMemberFromEditor() {
   const name = editMemberName.value.trim();
-  const flowers = editMemberFlowers.value.trim();
+  const flowers = normalizeFlowerList(editMemberFlowers.value).join("、");
+  editMemberFlowers.value = flowers;
   if (!name) {
     renderTip("请先填写成员名称");
     return false;
@@ -379,6 +389,29 @@ editMemberSelect.addEventListener("change", () => {
 
 saveLocalBtn.addEventListener("click", () => {
   updateMemberFromEditor();
+});
+
+deleteMemberBtn.addEventListener("click", () => {
+  const name = editMemberName.value.trim();
+  if (!name) {
+    renderTip("请先选择或输入成员名称");
+    return;
+  }
+  const pass = window.prompt("请输入删除口令");
+  if (pass !== "花家致富删除") {
+    renderTip("删除口令错误");
+    return;
+  }
+  const ok = window.confirm(`确定删除成员“${name}”吗？`);
+  if (!ok) return;
+  data = data.filter(item => item.name !== name);
+  buildIndex();
+  hydrateSelects();
+  hydrateEditor();
+  editMemberName.value = "";
+  editMemberFlowers.value = "";
+  setFlowerTagsFromString("");
+  renderTip("已删除成员，记得保存到仓库");
 });
 
 saveGithubBtn.addEventListener("click", async () => {
