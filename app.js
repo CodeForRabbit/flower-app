@@ -11,10 +11,8 @@ const flowerPick = document.getElementById("flowerPick");
 const addFlowerBtn = document.getElementById("addFlowerBtn");
 const flowerInput = document.getElementById("flowerInput");
 const flowerTagsEl = document.getElementById("flowerTags");
-const saveLocalBtn = document.getElementById("saveLocalBtn");
 const deleteMemberBtn = document.getElementById("deleteMemberBtn");
-const saveGithubBtn = document.getElementById("saveGithubBtn");
-const githubTokenInput = document.getElementById("githubToken");
+const saveBtn = document.getElementById("saveBtn");
 const saveStatus = document.getElementById("saveStatus");
 const editToggle = document.getElementById("editToggle");
 const editorPanel = document.getElementById("editorPanel");
@@ -278,13 +276,13 @@ function base64EncodeUtf8(str) {
 }
 
 async function saveToGithub() {
-  const token = githubTokenInput.value.trim();
+  const token = "";
   if (!token) {
-    saveStatus.textContent = "请先填写 GitHub Token";
+    saveStatus.textContent = "请先配置 Token";
     return;
   }
 
-  saveStatus.textContent = "正在保存到 GitHub...";
+  saveStatus.textContent = "正在保存";
 
   const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
 
@@ -387,10 +385,6 @@ editMemberSelect.addEventListener("change", () => {
   setFlowerTagsFromString(member ? member.flowers : "");
 });
 
-saveLocalBtn.addEventListener("click", () => {
-  updateMemberFromEditor();
-});
-
 deleteMemberBtn.addEventListener("click", () => {
   const name = editMemberName.value.trim();
   if (!name) {
@@ -398,7 +392,7 @@ deleteMemberBtn.addEventListener("click", () => {
     return;
   }
   const pass = window.prompt("请输入删除口令");
-  if (pass !== "花家致富删除") {
+  if (pass !== "物是人非") {
     renderTip("删除口令错误");
     return;
   }
@@ -414,7 +408,7 @@ deleteMemberBtn.addEventListener("click", () => {
   renderTip("已删除成员，记得保存到仓库");
 });
 
-saveGithubBtn.addEventListener("click", async () => {
+saveBtn.addEventListener("click", async () => {
   const ok = updateMemberFromEditor();
   if (ok) {
     await saveToGithub();
