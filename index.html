@@ -61,11 +61,9 @@
   <div class="editor-row">
     <label class="filter-label" for="editMemberFlowers">成员拥有的花</label>
     <div class="flower-editor">
-      <div class="flower-controls">
-        <select id="flowerPick">
-          <option value="">从已有花名选择</option>
-        </select>
-        <button id="addFlowerBtn" type="button">添加</button>
+      <div class="flower-picker">
+        <div class="picker-title">从已有花名选择（点一下即添加）</div>
+        <div id="flowerPickTags" class="pick-tags"></div>
       </div>
       <div class="flower-controls">
         <input id="flowerInput" placeholder="手动输入花名后回车" />
@@ -76,8 +74,20 @@
   </div>
 
   <div class="actions">
-    <button id="saveBtn" type="button">保存</button>
+    <button id="saveLocalBtn" type="button">保存到本页</button>
     <button id="deleteMemberBtn" type="button">删除成员</button>
+  </div>
+
+  <div class="editor-divider"></div>
+
+  <h2>保存到 GitHub</h2>
+  <p class="editor-tip">会直接更新仓库中的 data.json</p>
+  <div class="editor-row">
+    <label class="filter-label" for="githubToken">GitHub Token</label>
+    <input id="githubToken" type="password" placeholder="粘贴你的 Token" />
+  </div>
+  <div class="actions">
+    <button id="saveGithubBtn" type="button">保存到仓库</button>
   </div>
   <div id="saveStatus" class="editor-tip"></div>
 </div>

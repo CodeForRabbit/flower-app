@@ -270,6 +270,58 @@ button:hover {
   flex: 1;
 }
 
+.flower-picker {
+  background: #faf4f0;
+  border: 1px dashed #ead7cc;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.picker-title {
+  font-size: 12px;
+  color: #8a7a72;
+  margin-bottom: 6px;
+}
+
+.pick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 140px;
+  overflow: auto;
+  padding: 2px;
+}
+
+.pick-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fff6f2;
+  border: 1px solid #f0d8cf;
+  color: #7a4c3f;
+  font-size: 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.pick-tag::before {
+  content: "❀";
+  font-size: 12px;
+  color: #c57b7b;
+}
+
+.pick-tag:hover {
+  background: #fff1ec;
+}
+
+.pick-tag.active {
+  background: #ffe2d6;
+  color: #8b3d2c;
+  border-color: #f1c3b3;
+}
+
 .flower-tags {
   display: flex;
   flex-wrap: wrap;
@@ -285,6 +337,7 @@ button:hover {
   background: #eef3ef;
   color: #4a5b50;
   font-size: 12px;
+  position: relative;
 }
 
 .tag button {
@@ -293,4 +346,10 @@ button:hover {
   border: 1px solid #d8e2dc;
   background: #f7fbf8;
   font-size: 12px;
+}
+
+.tag::before {
+  content: "✿";
+  font-size: 12px;
+  color: #9c6a6a;
 }

@@ -7,12 +7,13 @@ const flowerSelect = document.getElementById("flowerSelect");
 const editMemberSelect = document.getElementById("editMemberSelect");
 const editMemberName = document.getElementById("editMemberName");
 const editMemberFlowers = document.getElementById("editMemberFlowers");
-const flowerPick = document.getElementById("flowerPick");
-const addFlowerBtn = document.getElementById("addFlowerBtn");
+const flowerPickTags = document.getElementById("flowerPickTags");
 const flowerInput = document.getElementById("flowerInput");
 const flowerTagsEl = document.getElementById("flowerTags");
+const saveLocalBtn = document.getElementById("saveLocalBtn");
 const deleteMemberBtn = document.getElementById("deleteMemberBtn");
-const saveBtn = document.getElementById("saveBtn");
+const saveGithubBtn = document.getElementById("saveGithubBtn");
+const githubTokenInput = document.getElementById("githubToken");
 const saveStatus = document.getElementById("saveStatus");
 const editToggle = document.getElementById("editToggle");
 const editorPanel = document.getElementById("editorPanel");
@@ -87,7 +88,6 @@ function hydrateSelects() {
 
 function hydrateEditor() {
   editMemberSelect.innerHTML = `<option value="">新成员</option>`;
-  flowerPick.innerHTML = `<option value="">从已有花名选择</option>`;
   data
     .map(item => item.name)
     .sort()
@@ -98,12 +98,7 @@ function hydrateEditor() {
       editMemberSelect.appendChild(opt);
     });
 
-  [...flowerIndex.keys()].sort().forEach(name => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    flowerPick.appendChild(opt);
-  });
+  renderFlowerPickTags();
 }
 
 function renderDefault() {
@@ -230,6 +225,7 @@ function renderFlowerTags() {
     flowerTagsEl.appendChild(tag);
   });
   syncFlowersTextarea();
+  renderFlowerPickTags();
 }
 
 function syncFlowersTextarea() {
@@ -243,6 +239,23 @@ function addFlowerTag(name) {
     flowerTags.push(n);
     renderFlowerTags();
   }
+}
+
+function renderFlowerPickTags() {
+  if (!flowerPickTags) return;
+  flowerPickTags.innerHTML = "";
+  const allNames = [...flowerIndex.keys()].sort();
+  allNames.forEach(name => {
+    const tag = document.createElement("button");
+    tag.type = "button";
+    tag.className = "pick-tag";
+    if (flowerTags.includes(name)) tag.classList.add("active");
+    tag.textContent = name;
+    tag.addEventListener("click", () => {
+      addFlowerTag(name);
+    });
+    flowerPickTags.appendChild(tag);
+  });
 }
 
 function updateMemberFromEditor() {
@@ -276,13 +289,13 @@ function base64EncodeUtf8(str) {
 }
 
 async function saveToGithub() {
-  const token = "";
+  const token = githubTokenInput.value.trim();
   if (!token) {
-    saveStatus.textContent = "请先配置 Token";
+    saveStatus.textContent = "请先填写 GitHub Token";
     return;
   }
 
-  saveStatus.textContent = "正在保存";
+  saveStatus.textContent = "正在保存到 GitHub...";
 
   const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
 
@@ -392,7 +405,7 @@ deleteMemberBtn.addEventListener("click", () => {
     return;
   }
   const pass = window.prompt("请输入删除口令");
-  if (pass !== "物是人非") {
+  if (pass !== "花家致富删除") {
     renderTip("删除口令错误");
     return;
   }
@@ -408,16 +421,15 @@ deleteMemberBtn.addEventListener("click", () => {
   renderTip("已删除成员，记得保存到仓库");
 });
 
-saveBtn.addEventListener("click", async () => {
+saveLocalBtn.addEventListener("click", () => {
+  updateMemberFromEditor();
+});
+
+saveGithubBtn.addEventListener("click", async () => {
   const ok = updateMemberFromEditor();
   if (ok) {
     await saveToGithub();
   }
-});
-
-addFlowerBtn.addEventListener("click", () => {
-  addFlowerTag(flowerPick.value);
-  flowerPick.value = "";
 });
 
 flowerInput.addEventListener("keydown", e => {
