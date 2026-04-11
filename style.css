@@ -2,10 +2,10 @@ body {
   margin: 0;
   font-family: "STKaiti", "KaiTi", "Songti SC", "PingFang SC", serif;
   background:
-    radial-gradient(1200px 600px at 10% -10%, #fff4ef 0%, transparent 60%),
-    radial-gradient(1000px 500px at 110% 0%, #f7efe8 0%, transparent 55%),
-    #fdf8f5;
-  color: #5a4a42;
+    radial-gradient(900px 500px at 10% -10%, #fff0f6 0%, transparent 60%),
+    radial-gradient(900px 500px at 110% 0%, #f6f0ff 0%, transparent 55%),
+    linear-gradient(180deg, #fff8f3 0%, #fef6f2 100%);
+  color: #6b4b4b;
   position: relative;
   overflow-x: hidden;
 }
@@ -75,7 +75,7 @@ body::after {
   margin: 0;
   font-size: 28px;
   letter-spacing: 2px;
-  color: #9a3f3f;
+  color: #a24864;
 }
 
 .header p {
@@ -99,7 +99,7 @@ body::after {
 input, select, button {
   padding: 10px;
   border-radius: 12px;
-  border: 1px solid #eee;
+  border: 1px solid #f0d8e3;
   background: #fff;
   font-size: 14px;
 }
@@ -122,13 +122,13 @@ textarea {
 
 button {
   cursor: pointer;
-  background: #f7e8e2;
-  color: #7a5a52;
-  border: 1px solid #f0d8cf;
+  background: #fdeef4;
+  color: #7a3f55;
+  border: 1px solid #f3d3e1;
 }
 
 button:hover {
-  background: #f3ded6;
+  background: #f8dfe9;
 }
 
 .card {
@@ -143,18 +143,18 @@ button:hover {
 .card h3 {
   margin: 0 0 10px 0;
   font-size: 20px;
-  color: #7a2e2e;
+  color: #8b3b5f;
   letter-spacing: 1px;
   display: inline-block;
   padding-bottom: 6px;
-  border-bottom: 2px solid #e9cfc6;
+  border-bottom: 2px solid #efc8d8;
 }
 
 .flower {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #fbeaea;
+  background: #fde8f0;
   border-radius: 999px;
   padding: 4px 10px;
   margin: 4px;
@@ -167,14 +167,14 @@ button:hover {
 }
 
 .flower.highlight {
-  background: #ffd7c6;
-  color: #8b3d2c;
+  background: #ffd7e6;
+  color: #8b3d6b;
 }
 
 .flower-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 8px;
 }
 
 .related-block {
@@ -190,8 +190,8 @@ button:hover {
 }
 
 .related {
-  background: #faf4f0;
-  border: 1px dashed #ead7cc;
+  background: #fff6fa;
+  border: 1px dashed #efc8d8;
   border-radius: 12px;
   padding: 8px 10px;
 }
@@ -199,15 +199,15 @@ button:hover {
 .related-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .owner {
-  background: #eef5f0;
+  background: #f2f6f8;
   border-radius: 999px;
   padding: 4px 10px;
   font-size: 12px;
-  color: #4b6654;
+  color: #4d5a6b;
 }
 
 .empty {
@@ -270,23 +270,10 @@ button:hover {
   flex: 1;
 }
 
-.flower-picker {
-  background: #faf4f0;
-  border: 1px dashed #ead7cc;
-  border-radius: 12px;
-  padding: 10px;
-}
-
-.picker-title {
-  font-size: 12px;
-  color: #8a7a72;
-  margin-bottom: 6px;
-}
-
 .pick-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   max-height: 140px;
   overflow: auto;
   padding: 2px;
@@ -298,34 +285,34 @@ button:hover {
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  background: #fff6f2;
-  border: 1px solid #f0d8cf;
-  color: #7a4c3f;
+  background: #fff1f7;
+  border: 1px solid #f1c8d8;
+  color: #7a4a62;
   font-size: 12px;
   cursor: pointer;
   position: relative;
 }
 
 .pick-tag::before {
-  content: "❀";
+  content: "✿";
   font-size: 12px;
-  color: #c57b7b;
+  color: #c66f94;
 }
 
 .pick-tag:hover {
-  background: #fff1ec;
+  background: #ffe2ee;
 }
 
 .pick-tag.active {
-  background: #ffe2d6;
-  color: #8b3d2c;
-  border-color: #f1c3b3;
+  background: #ffd2e4;
+  color: #8b3560;
+  border-color: #f0aeca;
 }
 
 .flower-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .tag {
@@ -334,8 +321,8 @@ button:hover {
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  background: #eef3ef;
-  color: #4a5b50;
+  background: #f4f1f7;
+  color: #5b4a63;
   font-size: 12px;
   position: relative;
 }
@@ -343,13 +330,50 @@ button:hover {
 .tag button {
   padding: 0 6px;
   border-radius: 999px;
-  border: 1px solid #d8e2dc;
-  background: #f7fbf8;
+  border: 1px solid #e4d8e8;
+  background: #fbf8fd;
   font-size: 12px;
 }
 
 .tag::before {
-  content: "✿";
+  content: "❀";
   font-size: 12px;
-  color: #9c6a6a;
+  color: #b36d92;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+.modal-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(60, 40, 60, 0.25);
+  backdrop-filter: blur(2px);
+}
+
+.modal-card {
+  position: relative;
+  margin: 12vh auto 0;
+  width: min(90vw, 520px);
+  background: #fffafb;
+  border-radius: 16px;
+  border: 1px solid #f0d8e3;
+  box-shadow: 0 12px 24px rgba(120, 80, 100, 0.16);
+  padding: 12px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-size: 16px;
+  color: #8b3b5f;
+  letter-spacing: 1px;
 }

@@ -8,6 +8,10 @@ const editMemberSelect = document.getElementById("editMemberSelect");
 const editMemberName = document.getElementById("editMemberName");
 const editMemberFlowers = document.getElementById("editMemberFlowers");
 const flowerPickTags = document.getElementById("flowerPickTags");
+const openFlowerPicker = document.getElementById("openFlowerPicker");
+const closeFlowerPicker = document.getElementById("closeFlowerPicker");
+const flowerModal = document.getElementById("flowerModal");
+const flowerSearchInput = document.getElementById("flowerSearchInput");
 const flowerInput = document.getElementById("flowerInput");
 const flowerTagsEl = document.getElementById("flowerTags");
 const saveLocalBtn = document.getElementById("saveLocalBtn");
@@ -244,7 +248,10 @@ function addFlowerTag(name) {
 function renderFlowerPickTags() {
   if (!flowerPickTags) return;
   flowerPickTags.innerHTML = "";
-  const allNames = [...flowerIndex.keys()].sort();
+  const keyword = flowerSearchInput ? flowerSearchInput.value.trim() : "";
+  const allNames = [...flowerIndex.keys()]
+    .filter(name => !keyword || name.includes(keyword))
+    .sort();
   allNames.forEach(name => {
     const tag = document.createElement("button");
     tag.type = "button";
@@ -449,3 +456,28 @@ editToggle.addEventListener("click", () => {
   editorPanel.classList.toggle("hidden");
   editToggle.textContent = isHidden ? "收起编辑" : "编辑";
 });
+
+openFlowerPicker.addEventListener("click", () => {
+  flowerModal.classList.remove("hidden");
+  if (flowerSearchInput) {
+    flowerSearchInput.value = "";
+    renderFlowerPickTags();
+    flowerSearchInput.focus();
+  }
+});
+
+closeFlowerPicker.addEventListener("click", () => {
+  flowerModal.classList.add("hidden");
+});
+
+flowerModal.addEventListener("click", e => {
+  if (e.target.classList.contains("modal-mask")) {
+    flowerModal.classList.add("hidden");
+  }
+});
+
+if (flowerSearchInput) {
+  flowerSearchInput.addEventListener("input", () => {
+    renderFlowerPickTags();
+  });
+}
