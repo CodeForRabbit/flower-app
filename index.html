@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>公会鲜花查询</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f3;
+        --panel: #ffffff;
+        --ink: #23261f;
+        --muted: #6f7568;
+        --line: #dce1d4;
+        --green: #2f6f4e;
+        --green-weak: #e7f1e9;
+        --rose: #9a4b61;
+        --amber: #a66d1f;
+        --blue: #456c98;
+        --shadow: 0 12px 30px rgba(39, 46, 32, 0.09);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        letter-spacing: 0;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 28px 0 40px;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.12;
+        font-weight: 780;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(92px, 1fr));
+        gap: 8px;
+        min-width: 420px;
+      }
+
+      .stat {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      .stat span {
+        display: block;
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .controls {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 0;
+        background: rgba(246, 247, 243, 0.94);
+        backdrop-filter: blur(12px);
+      }
+
+      .search {
+        width: 100%;
+        min-height: 46px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        color: var(--ink);
+        padding: 0 14px;
+        outline: none;
+        box-shadow: var(--shadow);
+      }
+
+      .search:focus {
+        border-color: var(--green);
+      }
+
+      .tabs {
+        display: inline-grid;
+        grid-template-columns: repeat(2, 1fr);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 4px;
+        box-shadow: var(--shadow);
+      }
+
+      .tab {
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        min-height: 38px;
+        padding: 0 14px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .tab.is-active {
+        background: var(--green);
+        color: #fff;
+      }
+
+      .export-button {
+        border: 1px solid #cfd8c9;
+        border-radius: 8px;
+        background: var(--panel);
+        color: var(--green);
+        min-height: 46px;
+        padding: 0 14px;
+        cursor: pointer;
+        font-weight: 700;
+        white-space: nowrap;
+        box-shadow: var(--shadow);
+      }
+
+      .export-button:disabled {
+        cursor: wait;
+        opacity: 0.66;
+      }
+
+      .notice {
+        display: none;
+        margin: 8px 0 16px;
+        border: 1px solid #ead4ae;
+        border-left: 4px solid var(--amber);
+        border-radius: 8px;
+        background: #fffaf0;
+        padding: 12px 14px;
+        color: #59411e;
+        line-height: 1.55;
+      }
+
+      .notice.is-visible {
+        display: block;
+      }
+
+      .view {
+        display: none;
+      }
+
+      .view.is-active {
+        display: block;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+      }
+
+      .member-card,
+      .flower-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .card-title {
+        margin: 0;
+        min-width: 0;
+        font-size: 18px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+
+      .pill {
+        flex: 0 0 auto;
+        border-radius: 999px;
+        padding: 4px 8px;
+        background: var(--green-weak);
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 650;
+        white-space: nowrap;
+      }
+
+      .flower-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+        gap: 10px;
+        padding: 12px;
+      }
+
+      .flower-tile {
+        min-width: 0;
+      }
+
+      .thumb {
+        width: 100%;
+        aspect-ratio: 1;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #eef0ea;
+        object-fit: cover;
+        display: block;
+      }
+
+      .missing-thumb {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        aspect-ratio: 1;
+        border: 1px dashed #d8b168;
+        border-radius: 8px;
+        background: #fff7df;
+        color: #8a5e15;
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      .flower-name {
+        margin: 6px 0 0;
+        color: var(--ink);
+        font-size: 12px;
+        line-height: 1.3;
+        text-align: center;
+        overflow-wrap: anywhere;
+      }
+
+      .flower-card {
+        display: grid;
+        grid-template-columns: 104px minmax(0, 1fr);
+        min-height: 126px;
+      }
+
+      .flower-card .thumb {
+        width: 104px;
+        height: 104px;
+        margin: 10px;
+      }
+
+      .flower-card .missing-thumb {
+        width: 104px;
+        height: 104px;
+        margin: 10px;
+      }
+
+      .flower-body {
+        min-width: 0;
+        padding: 13px 14px 13px 4px;
+      }
+
+      .owners {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .owner {
+        border: 1px solid #d8d6e6;
+        border-radius: 999px;
+        background: #f3f1fb;
+        color: #50497a;
+        padding: 4px 8px;
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .empty {
+        display: none;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--muted);
+        padding: 28px;
+        text-align: center;
+      }
+
+      .empty.is-visible {
+        display: block;
+      }
+
+      mark {
+        border-radius: 3px;
+        background: #f5e7a8;
+        color: inherit;
+        padding: 0 2px;
+      }
+
+      @media (max-width: 820px) {
+        .topbar,
+        .controls {
+          grid-template-columns: 1fr;
+        }
+
+        .stats {
+          min-width: 0;
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .tabs {
+          width: 100%;
+        }
+
+        .export-button {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 460px) {
+        .shell {
+          width: min(100% - 18px, 1180px);
+          padding-top: 18px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .flower-list {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar" aria-labelledby="page-title">
+        <div>
+          <h1 id="page-title">公会鲜花查询</h1>
+          <p class="subtitle" id="generated-info"></p>
+        </div>
+        <div class="stats" aria-label="统计">
+          <div class="stat"><strong id="member-count">0</strong><span>成员</span></div>
+          <div class="stat"><strong id="flower-count">0</strong><span>名单鲜花</span></div>
+          <div class="stat"><strong id="image-count">0</strong><span>图册图片</span></div>
+          <div class="stat"><strong id="issue-count">0</strong><span>待检查</span></div>
+        </div>
+      </section>
+
+      <section class="controls" aria-label="查询工具">
+        <input class="search" id="search" type="search" placeholder="搜索成员或鲜花" autocomplete="off">
+        <div class="tabs" role="tablist" aria-label="浏览方式">
+          <button class="tab is-active" id="member-tab" type="button" role="tab" aria-selected="true" data-view="members">按成员</button>
+          <button class="tab" id="flower-tab" type="button" role="tab" aria-selected="false" data-view="flowers">按鲜花</button>
+        </div>
+        <button class="export-button" id="export-image" type="button">导出图片</button>
+      </section>
+
+      <section class="notice" id="notice" aria-live="polite"></section>
+
+      <section class="view is-active" id="members-view" aria-labelledby="member-tab">
+        <div class="grid" id="members-grid"></div>
+        <div class="empty" id="members-empty">没有匹配的成员或鲜花。</div>
+      </section>
+
+      <section class="view" id="flowers-view" aria-labelledby="flower-tab">
+        <div class="grid" id="flowers-grid"></div>
+        <div class="empty" id="flowers-empty">没有匹配的鲜花或成员。</div>
+      </section>
+    </main>
+
+    <script src="assets/guild-flower-data.js"></script>
+    <script>
+      const data = window.GUILD_FLOWER_DATA;
+      const state = {
+        query: '',
+        view: 'members',
+      };
+
+      const elements = {
+        generatedInfo: document.querySelector('#generated-info'),
+        memberCount: document.querySelector('#member-count'),
+        flowerCount: document.querySelector('#flower-count'),
+        imageCount: document.querySelector('#image-count'),
+        issueCount: document.querySelector('#issue-count'),
+        search: document.querySelector('#search'),
+        exportImage: document.querySelector('#export-image'),
+        notice: document.querySelector('#notice'),
+        tabs: document.querySelectorAll('.tab'),
+        membersView: document.querySelector('#members-view'),
+        flowersView: document.querySelector('#flowers-view'),
+        membersGrid: document.querySelector('#members-grid'),
+        flowersGrid: document.querySelector('#flowers-grid'),
+        membersEmpty: document.querySelector('#members-empty'),
+        flowersEmpty: document.querySelector('#flowers-empty'),
+      };
+
+      const collator = new Intl.Collator('zh-Hans-CN');
+      const EXPORT_IMAGE_TIMEOUT_MS = 2000;
+
+      function normalize(value) {
+        return String(value).toLowerCase().replace(/\s+/g, '');
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (char) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+        })[char]);
+      }
+
+      function highlight(value) {
+        const escaped = escapeHtml(value);
+        if (!state.query) {
+          return escaped;
+        }
+
+        const index = normalize(value).indexOf(normalize(state.query));
+        if (index === -1) {
+          return escaped;
+        }
+
+        const raw = String(value);
+        const before = escapeHtml(raw.slice(0, index));
+        const match = escapeHtml(raw.slice(index, index + state.query.length));
+        const after = escapeHtml(raw.slice(index + state.query.length));
+        return `${before}<mark>${match}</mark>${after}`;
+      }
+
+      function imageSrc(path) {
+        return path ? encodeURI(path) : '';
+      }
+
+      function createFlowerVisual(name, extraClass = '') {
+        const image = data.imageMap[name] ?? data.flowers.find((flower) => flower.name === name)?.image;
+        if (!image) {
+          return `<div class="missing-thumb ${extraClass}" aria-label="${escapeHtml(name)}缺图">缺图</div>`;
+        }
+
+        return `<img class="thumb ${extraClass}" src="${imageSrc(image)}" alt="${escapeHtml(name)}" loading="lazy">`;
+      }
+
+      function flowerTile(name) {
+        return `
+          <div class="flower-tile">
+            ${createFlowerVisual(name)}
+            <p class="flower-name">${highlight(name)}</p>
+          </div>
+        `;
+      }
+
+      function memberMatches(member) {
+        const query = normalize(state.query);
+        if (!query) {
+          return true;
+        }
+
+        return normalize(member.name).includes(query)
+          || member.flowers.some((flower) => normalize(flower).includes(query));
+      }
+
+      function flowerMatches(flower) {
+        const query = normalize(state.query);
+        if (!query) {
+          return true;
+        }
+
+        return normalize(flower.name).includes(query)
+          || flower.owners.some((owner) => normalize(owner).includes(query));
+      }
+
+      function renderStats() {
+        const generatedAt = new Date(data.generatedAt);
+        elements.generatedInfo.textContent = `数据生成于 ${generatedAt.toLocaleString('zh-CN')}，可按成员浏览，也可按鲜花反查拥有者。`;
+        elements.memberCount.textContent = data.stats.memberCount;
+        elements.flowerCount.textContent = data.stats.flowerCount;
+        elements.imageCount.textContent = data.stats.imageCount;
+        elements.issueCount.textContent = data.stats.missingImageCount + data.stats.duplicateEntryCount;
+      }
+
+      function renderNotice() {
+        const messages = [];
+        if (data.issues.missingImages.length > 0) {
+          messages.push(`缺少图片：${data.issues.missingImages.join('、')}`);
+        }
+        if (data.issues.duplicateEntries.length > 0) {
+          const duplicates = data.issues.duplicateEntries
+            .map((item) => `${item.member}：${item.flowers.join('、')}`)
+            .join('；');
+          messages.push(`重复填写：${duplicates}`);
+        }
+
+        elements.notice.textContent = messages.join('。');
+        elements.notice.classList.toggle('is-visible', messages.length > 0);
+      }
+
+      function renderMembers() {
+        const members = data.members
+          .filter(memberMatches)
+          .sort((a, b) => collator.compare(a.name, b.name));
+
+        elements.membersGrid.innerHTML = members.map((member) => `
+          <article class="member-card">
+            <header class="card-head">
+              <h2 class="card-title">${highlight(member.name)}</h2>
+              <span class="pill">${member.count} 朵</span>
+            </header>
+            <div class="flower-list">
+              ${member.flowers.map(flowerTile).join('')}
+            </div>
+          </article>
+        `).join('');
+
+        elements.membersEmpty.classList.toggle('is-visible', members.length === 0);
+      }
+
+      function renderFlowers() {
+        const flowers = data.flowers
+          .filter(flowerMatches)
+          .sort((a, b) => collator.compare(a.name, b.name));
+
+        elements.flowersGrid.innerHTML = flowers.map((flower) => `
+          <article class="flower-card">
+            ${createFlowerVisual(flower.name)}
+            <div class="flower-body">
+              <header class="card-head">
+                <h2 class="card-title">${highlight(flower.name)}</h2>
+                <span class="pill">${flower.ownerCount} 人</span>
+              </header>
+              <div class="owners">
+                ${flower.owners.map((owner) => `<span class="owner">${highlight(owner)}</span>`).join('')}
+              </div>
+            </div>
+          </article>
+        `).join('');
+
+        elements.flowersEmpty.classList.toggle('is-visible', flowers.length === 0);
+      }
+
+      function renderViews() {
+        elements.membersView.classList.toggle('is-active', state.view === 'members');
+        elements.flowersView.classList.toggle('is-active', state.view === 'flowers');
+
+        if (state.view === 'members') {
+          renderMembers();
+        } else {
+          renderFlowers();
+        }
+      }
+
+      function setView(view) {
+        state.view = view;
+        for (const tab of elements.tabs) {
+          const isActive = tab.dataset.view === view;
+          tab.classList.toggle('is-active', isActive);
+          tab.setAttribute('aria-selected', String(isActive));
+        }
+        renderViews();
+      }
+
+      function wrapCanvasText(context, text, maxWidth) {
+        const chars = [...String(text)];
+        const lines = [];
+        let line = '';
+
+        for (const char of chars) {
+          const nextLine = line + char;
+          if (context.measureText(nextLine).width > maxWidth && line) {
+            lines.push(line);
+            line = char;
+          } else {
+            line = nextLine;
+          }
+        }
+
+        if (line) {
+          lines.push(line);
+        }
+        return lines;
+      }
+
+      function loadExportImage(src) {
+        return new Promise((resolve) => {
+          if (!src) {
+            resolve(null);
+            return;
+          }
+
+          const image = new Image();
+          const timeout = setTimeout(() => resolve(null), EXPORT_IMAGE_TIMEOUT_MS);
+          image.onload = () => {
+            clearTimeout(timeout);
+            resolve(image);
+          };
+          image.onerror = () => {
+            clearTimeout(timeout);
+            resolve(null);
+          };
+          image.src = imageSrc(src);
+        });
+      }
+
+      function drawMissingExportTile(context, x, y, size) {
+        context.fillStyle = '#fff7df';
+        context.strokeStyle = '#d8b168';
+        context.lineWidth = 2;
+        context.fillRect(x, y, size, size);
+        context.strokeRect(x, y, size, size);
+        context.fillStyle = '#8a5e15';
+        context.font = '700 18px sans-serif';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText('缺图', x + size / 2, y + size / 2);
+        context.textAlign = 'left';
+        context.textBaseline = 'alphabetic';
+      }
+
+      async function exportImage() {
+        elements.exportImage.disabled = true;
+        elements.exportImage.textContent = '生成中...';
+
+        try {
+        const width = 390;
+        const padding = 14;
+        const tileSize = 96;
+        const tileGap = 8;
+        const columns = 3;
+        const nameLineHeight = 20;
+        const memberGap = 18;
+        const headerHeight = 76;
+        const tileBlockHeight = tileSize + 48;
+        let height = headerHeight + padding;
+        const imageCache = new Map();
+        const flowerNames = [...new Set(data.members.flatMap((member) => member.flowers))];
+
+        for (const member of data.members) {
+          const rows = Math.max(1, Math.ceil(member.flowers.length / columns));
+          height += 50 + rows * tileBlockHeight + memberGap;
+        }
+
+        await Promise.all(flowerNames.map(async (flowerName) => {
+          imageCache.set(flowerName, await loadExportImage(data.imageMap[flowerName]));
+        }));
+
+        const canvas = document.createElement('canvas');
+        const scale = 1;
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        const context = canvas.getContext('2d');
+        context.scale(scale, scale);
+        context.fillStyle = '#f6f7f3';
+        context.fillRect(0, 0, width, height);
+        context.fillStyle = '#23261f';
+        context.font = '800 26px sans-serif';
+        context.fillText('公会鲜花清单', padding, 36);
+        context.fillStyle = '#6f7568';
+        context.font = '400 14px sans-serif';
+        context.fillText(`${data.stats.memberCount} 位成员 · ${data.stats.flowerCount} 种鲜花 · ${new Date(data.generatedAt).toLocaleDateString('zh-CN')}`, padding, 60);
+
+        let y = headerHeight;
+        for (const member of data.members) {
+          context.fillStyle = '#ffffff';
+          context.fillRect(padding, y, width - padding * 2, 42);
+          context.fillStyle = '#2f6f4e';
+          context.font = '800 19px sans-serif';
+          context.fillText(`${member.name} · ${member.count} 朵`, padding + 14, y + 28);
+          y += 56;
+
+          for (let index = 0; index < member.flowers.length; index += 1) {
+            const flowerName = member.flowers[index];
+            const column = index % columns;
+            const row = Math.floor(index / columns);
+            const x = padding + column * (tileSize + tileGap);
+            const tileY = y + row * tileBlockHeight;
+            const image = imageCache.get(flowerName);
+
+            if (image) {
+              context.drawImage(image, x, tileY, tileSize, tileSize);
+            } else {
+              drawMissingExportTile(context, x, tileY, tileSize);
+            }
+
+            context.fillStyle = '#23261f';
+            context.font = '400 15px sans-serif';
+            const lines = wrapCanvasText(context, flowerName, tileSize).slice(0, 2);
+            lines.forEach((line, lineIndex) => {
+              context.fillText(line, x, tileY + tileSize + 19 + lineIndex * nameLineHeight);
+            });
+          }
+
+          y += Math.ceil(member.flowers.length / columns) * tileBlockHeight + memberGap;
+        }
+
+        const link = document.createElement('a');
+        link.download = '公会鲜花清单.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        } catch (error) {
+          console.error(error);
+          alert('导出图片失败，请刷新页面后重试。');
+        } finally {
+        elements.exportImage.disabled = false;
+        elements.exportImage.textContent = '导出图片';
+        }
+      }
+
+      elements.search.addEventListener('input', (event) => {
+        state.query = event.target.value.trim();
+        renderViews();
+      });
+
+      elements.exportImage.addEventListener('click', exportImage);
+
+      for (const tab of elements.tabs) {
+        tab.addEventListener('click', () => setView(tab.dataset.view));
+      }
+
+      renderStats();
+      renderNotice();
+      renderViews();
+    </script>
+  </body>
+</html>
