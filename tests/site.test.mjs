@@ -40,6 +40,38 @@ test('export image uses mobile width, image timeout, and restores button state',
   assert.match(html, /Promise\.all/);
 });
 
+test('index.html fetches the latest member txt and keeps generated data fallback', () => {
+  const html = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
+
+  assert.match(html, /MEMBER_TEXT_FILE = '空白文本\.txt'/);
+  assert.match(html, /fetch\(txtUrl, \{ cache: 'no-store' \}\)/);
+  assert.match(html, /buildDataFromMemberText\(text, fallbackData\)/);
+  assert.match(html, /useFallbackData\(\)/);
+});
+
+test('index.html starts with flowers and provides persistent card and compact modes', () => {
+  const html = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
+
+  assert.match(html, /view: 'flowers'/);
+  assert.match(html, /id="display-mode"/);
+  assert.match(html, /data-display-mode="card"/);
+  assert.match(html, /data-display-mode="compact"/);
+  assert.match(html, /displayMode:/);
+  assert.match(html, /function setDisplayMode\(mode\)/);
+  assert.match(html, /localStorage\.getItem\(DISPLAY_MODE_STORAGE_KEY\)/);
+  assert.match(html, /localStorage\.setItem\(DISPLAY_MODE_STORAGE_KEY, mode\)/);
+});
+
+test('flower layouts wrap owner tags without overflowing their cards', () => {
+  const html = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
+
+  assert.match(html, /\.flower-grid--card/);
+  assert.match(html, /\.flower-grid--compact/);
+  assert.match(html, /\.owners\s*\{[\s\S]*flex-wrap: wrap/);
+  assert.match(html, /\.owner\s*\{[\s\S]*overflow-wrap: anywhere/);
+  assert.match(html, /\.flower-body\s*\{[\s\S]*min-width: 0/);
+});
+
 test('generated data has members, flowers, and existing images', () => {
   const data = loadGeneratedData();
 
