@@ -72,6 +72,13 @@ test('flower layouts wrap owner tags without overflowing their cards', () => {
   assert.match(html, /\.flower-body\s*\{[\s\S]*min-width: 0/);
 });
 
+test('flower card text starts after the thumbnail and a visible gap', () => {
+  const html = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
+
+  assert.match(html, /\.flower-card\s*\{[\s\S]*grid-template-columns: 126px minmax\(0, 1fr\)/);
+  assert.match(html, /\.flower-grid--compact \.flower-card\s*\{[\s\S]*grid-template-columns: 97px minmax\(0, 1fr\)/);
+});
+
 test('generated data has members, flowers, and existing images', () => {
   const data = loadGeneratedData();
 
