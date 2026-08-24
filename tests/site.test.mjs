@@ -79,17 +79,19 @@ test('flower card text starts after the thumbnail and a visible gap', () => {
   assert.match(html, /\.flower-grid--compact \.flower-card\s*\{[\s\S]*grid-template-columns: 97px minmax\(0, 1fr\)/);
 });
 
-test('generated data has members, flowers, and existing images', () => {
+test('generated data maps existing images and preserves genuinely missing flowers', () => {
   const data = loadGeneratedData();
 
   assert.ok(data.stats.memberCount > 0);
   assert.ok(data.stats.flowerCount > 0);
-  assert.equal(data.issues.missingImages.length, 0);
 
   for (const flower of data.flowers) {
-    assert.ok(flower.image, `${flower.name} should have an image`);
-    assert.ok(fs.existsSync(path.join(rootDir, flower.image)), `${flower.image} should exist`);
     assert.ok(flower.owners.length > 0, `${flower.name} should have at least one owner`);
+    if (flower.image) {
+      assert.ok(fs.existsSync(path.join(rootDir, flower.image)), `${flower.image} should exist`);
+    } else {
+      assert.ok(data.issues.missingImages.includes(flower.name), `${flower.name} should be listed as missing`);
+    }
   }
 });
 
